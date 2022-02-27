@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VseVerification.Migrations;
 using VseVerification.Services.Contract;
 
 namespace VseVerification.Controllers;
@@ -17,19 +16,27 @@ public class VerificationsController : Controller
         _service = service;
     }
 
-    [Authorize]
+    [Authorize("Student")]
     [HttpGet("/verification/{id:guid}")]
     public async Task<IActionResult> ProcessVerification(Guid id)
     {
         try
         {
             await _service.VerifyMemberAsync(id, User.Identities);
-            return View("Success");
+            return Redirect("/verification/success");
         }
         catch (Exception exception)
         {
             _logger.LogCritical("Failed to process verification [{id}] for the following reason: {reason}", id, exception.Message);
-            return View("Failure");
+            return Redirect("/verification/failure");
         }
     }
+
+    [AllowAnonymous]
+    [HttpGet("/verification/success")]
+    public IActionResult Success() => View("Success");
+
+    [AllowAnonymous]
+    [HttpGet("/verification/failure")]
+    public IActionResult Failure() => View("Failure");
 }

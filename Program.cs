@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using VseVerification.Data;
+using VseVerification.Security;
 using VseVerification.Services;
 using VseVerification.Services.Contract;
 
@@ -20,8 +21,28 @@ builder.Services.AddDbContext<VseVerificationDbContext>(options =>
 
 builder.Services.AddTransient<IMemberVerificationsService, MemberVerificationsService>();
 
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme).AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+        options.DefaultChallengeScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+    })
+    .AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationOptions.DefaultScheme, _ => { });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Student", policy =>
+    {
+        policy.AuthenticationSchemes.Add(OpenIdConnectDefaults.AuthenticationScheme);
+        policy.RequireAuthenticatedUser();
+    });
+    
+    options.AddPolicy("ApiKey", policy =>
+    {
+        policy.AuthenticationSchemes.Add(ApiKeyAuthenticationOptions.DefaultScheme);
+        policy.RequireAuthenticatedUser();
+    });
+});
 
 builder.Services.AddControllersWithViews(options =>
 {
