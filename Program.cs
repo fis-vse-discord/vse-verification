@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using VseVerification.Data;
+using VseVerification.Services;
+using VseVerification.Services.Contract;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,8 @@ builder.Services.AddDbContext<VseVerificationDbContext>(options =>
         .UseNpgsql(builder.Configuration.GetConnectionString("Default")!)
         .UseSnakeCaseNamingConvention()
 );
+
+builder.Services.AddTransient<IMemberVerificationsService, MemberVerificationsService>();
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
