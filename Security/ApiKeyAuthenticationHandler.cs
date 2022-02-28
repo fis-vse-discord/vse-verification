@@ -1,4 +1,5 @@
 using System.Security;
+using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
@@ -27,6 +28,17 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        return Task.FromResult(AuthenticateResult.NoResult());
+        var header = Request.Headers["Authorization"].FirstOrDefault();
+        var token = header?.Replace("Bearer ", "");
+
+        if (string.IsNullOrEmpty(token) || token != _token)
+        {
+            return Task.FromResult(AuthenticateResult.Fail("Missing API key inside Authorization header."));
+        }
+
+        var principal = new ClaimsPrincipal();
+        var ticket = new AuthenticationTicket(principal, ApiKeyAuthenticationOptions.DefaultScheme);
+        
+        return Task.FromResult(AuthenticateResult.Success(ticket));
     }
 }
