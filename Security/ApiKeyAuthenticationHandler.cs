@@ -23,8 +23,6 @@ public class ApiKeyAuthenticationHandler : AuthenticationHandler<ApiKeyAuthentic
         {
             throw new SecurityException("ApiKey is not set in the application configuration!");
         }
-        
-        Console.WriteLine(_token);
     }
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
