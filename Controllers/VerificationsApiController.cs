@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VseVerification.Dto;
-using VseVerification.Models;
 using VseVerification.Services.Contract;
 
 namespace VseVerification.Controllers;
@@ -10,13 +9,10 @@ namespace VseVerification.Controllers;
 [Authorize("ApiKey")]
 public class VerificationsApiController : Controller
 {
-    private readonly ILogger<VerificationsApiController> _logger;
-
     private readonly IMemberVerificationsService _service;
 
-    public VerificationsApiController(ILogger<VerificationsApiController> logger, IMemberVerificationsService service)
+    public VerificationsApiController(IMemberVerificationsService service)
     {
-        _logger = logger;
         _service = service;
     }
 
