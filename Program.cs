@@ -17,7 +17,6 @@ builder.Host.ConfigureAppConfiguration(configuration => configuration.AddEnviron
 builder.Host.ConfigureServices((host, services) =>
 {
     services.Configure<VerificationConfiguration>(host.Configuration.GetRequiredSection("Verification"));
-    services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.All);
 
     services.AddDbContext<VseVerificationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("Default")!)
@@ -77,11 +76,11 @@ if (!app.Environment.IsDevelopment())
     app.UseStatusCodePagesWithReExecute("/error");
 }
 
-app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseForwardedHeaders(new ForwardedHeadersOptions {ForwardedHeaders = ForwardedHeaders.XForwardedProto});
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -95,8 +94,8 @@ app.MapRazorPages();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<VseVerificationDbContext>();    
-    
+    var context = services.GetRequiredService<VseVerificationDbContext>();
+
     await context.Database.MigrateAsync();
 }
 
