@@ -11,7 +11,6 @@ public class MemberVerification
     [Required]
     public ulong DiscordId { get; set; }
 
-    [Required]
     public string? AzureId { get; set; } = null;
 
     [Required]
