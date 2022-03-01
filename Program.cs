@@ -17,10 +17,7 @@ builder.Host.ConfigureAppConfiguration(configuration => configuration.AddEnviron
 builder.Host.ConfigureServices((host, services) =>
 {
     services.Configure<VerificationConfiguration>(host.Configuration.GetRequiredSection("Verification"));
-    services.Configure<ForwardedHeadersOptions>(options =>
-    {
-        options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
-    });
+    services.Configure<ForwardedHeadersOptions>(options => options.ForwardedHeaders = ForwardedHeaders.All);
 
     services.AddDbContext<VseVerificationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("Default")!)
