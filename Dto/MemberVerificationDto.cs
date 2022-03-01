@@ -7,7 +7,7 @@ public class MemberVerificationDto
 {
     public MemberVerificationDto(MemberVerification verification)
     {
-        IsVerified = verification.AzureId != null && !verification.IsRevoked;
+        IsVerified = verification.IsVerified;
         DiscordMemberId = verification.DiscordId;
         VerificationId = verification.Id.ToString();
         AzureId = verification.AzureId;

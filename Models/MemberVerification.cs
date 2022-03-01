@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VseVerification.Models;
 
@@ -15,4 +15,7 @@ public class MemberVerification
 
     [Required]
     public bool IsRevoked { get; set; } = false;
+
+    [NotMapped]
+    public bool IsVerified => AzureId != null && !IsRevoked;
 }

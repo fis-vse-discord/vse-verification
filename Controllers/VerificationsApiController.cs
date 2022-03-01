@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VseVerification.Dto;
+using VseVerification.Models;
 using VseVerification.Services.Contract;
 
 namespace VseVerification.Controllers;

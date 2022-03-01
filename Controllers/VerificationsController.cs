@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VseVerification.Exceptions;
 using VseVerification.Services.Contract;
 
 namespace VseVerification.Controllers;
@@ -25,10 +26,14 @@ public class VerificationsController : Controller
             await _service.VerifyMemberAsync(id, User.Identities);
             return Redirect("/verification/success");
         }
-        catch (Exception exception)
+        catch (MemberVerificationException exception)
         {
             _logger.LogCritical("Failed to process verification [{id}] for the following reason: {reason}", id, exception.Message);
             return Redirect("/verification/failure");
+        }
+        catch (Exception exception)
+        {
+            return Redirect("/error");
         }
     }
 
