@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -16,7 +17,7 @@ builder.Host.ConfigureAppConfiguration(configuration => configuration.AddEnviron
 builder.Host.ConfigureServices((host, services) =>
 {
     services.Configure<VerificationConfiguration>(host.Configuration.GetRequiredSection("Verification"));
-    
+
     services.AddDbContext<VseVerificationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("Default")!)
             .UseSnakeCaseNamingConvention()
@@ -45,6 +46,7 @@ builder.Host.ConfigureServices((host, services) =>
 
         options.AddPolicy("ApiKey", policy =>
         {
+            policy.AuthenticationSchemes.Clear();
             policy.AuthenticationSchemes.Add(ApiKeyAuthenticationOptions.DefaultScheme);
             policy.RequireAuthenticatedUser();
         });
@@ -55,10 +57,10 @@ builder.Host.ConfigureServices((host, services) =>
         var policy = new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
             .Build();
-        
+
         options.Filters.Add(new AuthorizeFilter(policy));
     });
-    
+
     services.AddRazorPages().AddMicrosoftIdentityUI();
 });
 

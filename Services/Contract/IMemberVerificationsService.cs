@@ -1,9 +1,11 @@
 using System.Security.Claims;
+using VseVerification.Models;
 
 namespace VseVerification.Services.Contract;
 
 public interface IMemberVerificationsService
 {
-    public Task VerifyMemberAsync(Guid id, IEnumerable<ClaimsIdentity> identities);
+    Task VerifyMemberAsync(Guid id, IEnumerable<ClaimsIdentity> identities);
 
+    Task<MemberVerification> GetMemberVerificationAsync(ulong discordId);
 }
