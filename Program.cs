@@ -80,6 +80,7 @@ if (!app.Environment.IsDevelopment())
     app.UseStatusCodePagesWithReExecute("/error");
 }
 
+app.UseForwardedHeaders();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
