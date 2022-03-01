@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
@@ -16,6 +17,10 @@ builder.Host.ConfigureAppConfiguration(configuration => configuration.AddEnviron
 builder.Host.ConfigureServices((host, services) =>
 {
     services.Configure<VerificationConfiguration>(host.Configuration.GetRequiredSection("Verification"));
+    services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
+    });
 
     services.AddDbContext<VseVerificationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("Default")!)
@@ -24,7 +29,8 @@ builder.Host.ConfigureServices((host, services) =>
 
     services.AddTransient<IMemberVerificationsService, MemberVerificationsService>();
 
-    services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+    services
+        .AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
         .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
     services.AddAuthentication(options =>
