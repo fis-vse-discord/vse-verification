@@ -33,6 +33,7 @@ public class VerificationsController : Controller
         }
         catch (Exception exception)
         {
+            _logger.LogCritical("Failure during verification: {message}", exception.Message);
             return Redirect("/error");
         }
     }
